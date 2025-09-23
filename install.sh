@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-MAIN_URL="https://raw.githubusercontent.com/DTunnel0/ProxyDT-Go-Releases/refs/heads/main/main.sh"
-REPO="DTunnel0/ProxyDT-Go-Releases"
+MAIN_URL="https://raw.githubusercontent.com/firewallfalcons/ProxyDT-Go-Releases/refs/heads/main/main.sh"
+REPO="firewallfalcons/ProxyDT-Go-Releases"
 BINARY_NAME="proxy"
 MAIN_NAME="main"
 INSTALL_DIR="/usr/local/bin"
@@ -34,11 +34,11 @@ log_error() {
 print_header() {
   clear
   echo -e "${BLUE}╔═══════════════════════════════════════════════════╗"
-  echo -e "║           INSTALADOR DO PROXY DTunnel             ║"
+  echo -e "║           DTunnel Proxy Installer                 ║"
   echo -e "╠═══════════════════════════════════════════════════╣"
-  echo -e "║ Repositório: $(printf '%-36s' "$REPO") ║"
-  echo -e "║ Binário:     $(printf '%-36s' "$BINARY_NAME") ║"
-  echo -e "║ Instalar em: $(printf '%-36s' "$INSTALL_DIR") ║"
+  echo -e "║ Repository:  $(printf '%-36s' "$REPO") ║"
+  echo -e "║ Binary:      $(printf '%-36s' "$BINARY_NAME") ║"
+  echo -e "║ Install to:  $(printf '%-36s' "$INSTALL_DIR") ║"
   echo -e "╚═══════════════════════════════════════════════════╝${NC}"
   echo
 }
@@ -47,7 +47,7 @@ detect_platform() {
   case "$(uname -s)" in
   Linux*) OS_NAME=linux ;;
   *)
-    log_error "Sistema operacional não suportado."
+    log_error "Unsupported operating system."
     exit 1
     ;;
   esac
@@ -58,19 +58,19 @@ detect_platform() {
   armv7l) ARCH_NAME=arm ;;
   i386) ARCH_NAME=386 ;;
   *)
-    log_error "Arquitetura não suportada."
+    log_error "Unsupported architecture."
     exit 1
     ;;
   esac
 
-  echo -e "${GREEN}💻 Plataforma detectada:${NC} $OS_NAME/$ARCH_NAME"
+  echo -e "${GREEN}💻 Platform detected:${NC} $OS_NAME/$ARCH_NAME"
 }
 
 fetch_tags() {
   TAGS_JSON=$(curl -s "https://api.github.com/repos/${REPO}/tags")
 
   if ! echo "$TAGS_JSON" | jq -e 'type == "array"' >/dev/null; then
-    log_error "Erro ao buscar tags no GitHub."
+    log_error "Error fetching tags from GitHub."
     echo "$TAGS_JSON"
     exit 1
   fi
@@ -78,27 +78,27 @@ fetch_tags() {
   TAGS=($(echo "$TAGS_JSON" | jq -r '.[].name' | head -n 5))
 
   if [[ ${#TAGS[@]} -eq 0 ]]; then
-    log_error "Nenhuma versão encontrada."
+    log_error "No versions found."
     exit 1
   fi
 }
 
 show_versions_and_select() {
   echo ""
-  echo -e "${BLUE}📦 Versões disponíveis:${NC}"
+  echo -e "${BLUE}📦 Available versions:${NC}"
   for i in "${!TAGS[@]}"; do
     printf " %d) %s\n" $((i + 1)) "${TAGS[$i]}"
   done
 
   echo ""
   while true; do
-    read -p "Escolha uma versão: " choice
+    read -p "Choose a version: " choice
     if [[ "$choice" =~ ^[1-9][0-9]*$ ]] && ((choice >= 1 && choice <= ${#TAGS[@]})); then
       VERSION="${TAGS[$((choice - 1))]}"
-      log_success "Versão selecionada: $VERSION"
+      log_success "Selected version: $VERSION"
       break
     else
-      log_error "Escolha inválida. Tente novamente."
+      log_error "Invalid choice. Try again."
     fi
   done
 }
@@ -109,49 +109,49 @@ download_and_install() {
   SHA_URL="${DOWNLOAD_URL}.sha256"
 
   cd "$TMP_DIR"
-  log_info "Baixando binário: $FILENAME"
+  log_info "Downloading binary: $FILENAME"
 
   HTTP_STATUS=$(curl -s -w "%{http_code}" -L -o "$FILENAME" "$DOWNLOAD_URL")
   if [[ "$HTTP_STATUS" != "200" ]]; then
-    log_error "Erro ao baixar o binário. Código HTTP: $HTTP_STATUS"
+    log_error "Error downloading the binary. HTTP code: $HTTP_STATUS"
     exit 1
   fi
 
   if curl -s -L -o "${FILENAME}.sha256" "$SHA_URL"; then
-    log_info "Verificando integridade com SHA256..."
+    log_info "Verifying integrity with SHA256..."
     sha256sum -c "${FILENAME}.sha256"
   else
-    log_warn "Arquivo SHA256 não encontrado. Pulando verificação..."
+    log_warn "SHA256 file not found. Skipping verification..."
   fi
 
-  log_info "Extraindo binário..."
+  log_info "Extracting binary..."
   tar -xzf "$FILENAME"
 
-  log_info "Instalando binário em $INSTALL_DIR..."
+  log_info "Installing binary to $INSTALL_DIR..."
   sudo mv "${BINARY_NAME}-${OS_NAME}-${ARCH_NAME}" "${INSTALL_DIR}/${BINARY_NAME}"
   sudo chmod +x "${INSTALL_DIR}/${BINARY_NAME}"
 
-  log_success "Binário instalado com sucesso!"
+  log_success "Binary installed successfully!"
 }
 
 install_main() {
-  log_info "Baixando script main.sh..."
+  log_info "Downloading script main.sh..."
 
   MAIN_PATH="${INSTALL_DIR}/${MAIN_NAME}"
   if curl -s -L -o "$MAIN_PATH" "$MAIN_URL"; then
     chmod +x "$MAIN_PATH"
-    log_success "main.sh instalado em: $MAIN_PATH"
-    log_success "Para executar o menu, execute: $RED$MAIN_NAME"
+    log_success "main.sh installed at: $MAIN_PATH"
+    log_success "To run the menu, execute: $RED$MAIN_NAME"
     return
   fi
 
-  log_error "Erro ao baixar o script main.sh."
+  log_error "Error downloading script main.sh."
   exit 1
 }
 
 cleanup() {
   rm -rf "$TMP_DIR"
-  log_info "Limpeza de arquivos temporários concluída."
+  log_info "Temporary files cleaned up."
 }
 
 main() {
