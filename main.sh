@@ -29,7 +29,7 @@ readonly PROXY_EXECUTABLE="/usr/local/bin/proxy"
 readonly LOG_PATH="/var/log"
 readonly SYSTEMD_SERVICE_PATH="/etc/systemd/system"
 readonly DEFAULT_BUFFER_SIZE=32768
-readonly DEFAULT_HTTP_RESPONSE="@DuTra01"
+readonly DEFAULT_HTTP_RESPONSE="@FirewallFalcon"
 readonly MIN_PORT=1
 readonly MAX_PORT=65535
 
@@ -63,18 +63,18 @@ confirm_action() {
     local answer
 
     while true; do
-        read -rp "$question (s/n) [$default_answer]: " answer
+        read -rp "$question (y/n) [$default_answer]: " answer
         answer=${answer:-$default_answer}
         case "${answer,,}" in
-        s | sim) return 0 ;;
-        n | nao | não) return 1 ;;
-        *) print_message "ERROR" "Resposta inválida. Use 's' para sim ou 'n' para não." ;;
+        y | yes) return 0 ;;
+        n | no) return 1 ;;
+        *) print_message "ERROR" "Invalid response. Use 'y' for yes or 'n' for no." ;;
         esac
     done
 }
 
 wait_for_enter() {
-    read -rp "$(format_prompt 'Pressione Enter para continuar...')" _
+    read -rp "$(format_prompt 'Press Enter to continue...')" _
 }
 
 get_service_name() {
@@ -120,16 +120,16 @@ prompt_for_token_if_missing() {
 
     if [[ -z "$token" ]]; then
         clear
-        print_message "WARN" "Token de acesso não encontrado."
+        print_message "WARN" "Access token not found."
 
         while true; do
-            token=$(read_input "Por favor, insira seu token")
+            token=$(read_input "Please enter your token")
             if validate_access_token "$token"; then
                 echo "$token" >"$TOKEN_PATH"
-                print_message "SUCCESS" "Token salvo em $TOKEN_PATH."
+                print_message "SUCCESS" "Token saved to $TOKEN_PATH."
                 return
             fi
-            print_message "ERROR" "Token inválido. Por favor, forneça um token válido."
+            print_message "ERROR" "Invalid token. Please provide a valid token."
         done
     fi
 }
@@ -139,20 +139,20 @@ ask_for_port() {
     local port
 
     while true; do
-        port=$(read_input "Porta")
+        port=$(read_input "Port")
 
         if ! is_valid_port "$port"; then
-            print_message "ERROR" "Porta inválida. Deve estar entre $MIN_PORT e $MAX_PORT."
+            print_message "ERROR" "Invalid port. Must be between $MIN_PORT and $MAX_PORT."
             continue
         fi
 
         if [[ "$operation" == "start" ]] && is_port_in_use "$port"; then
-            print_message "ERROR" "Porta $port já está em uso."
+            print_message "ERROR" "Port $port is already in use."
             continue
         fi
 
         if [[ "$operation" != "start" ]] && ! is_service_running "$port"; then
-            print_message "ERROR" "Nenhum serviço ativo na porta $port."
+            print_message "ERROR" "No active service on port $port."
             continue
         fi
 
@@ -174,7 +174,7 @@ build_service_file() {
 
     cat >"$service_file_path" <<EOF
 [Unit]
-Description=DTunnel Proxy Server na porta $port
+Description=DTunnel Proxy Server on port $port
 
 [Service]
 ExecStart=$PROXY_EXECUTABLE --token=$token --port=$port$ssl_enabled $ssl_cert_path $ssh_only_flag --buffer-size=$DEFAULT_BUFFER_SIZE --response=$http_response --domain --log-file=$(get_log_file_path "$port")
@@ -191,17 +191,17 @@ start_proxy_service() {
     port=$(ask_for_port "start") || return
     token=$(read_token_from_file)
 
-    if confirm_action "n" "$(format_prompt "${EMOJIS[SSL]} Deseja habilitar SSL?")"; then
+    if confirm_action "n" "$(format_prompt "${EMOJIS[SSL]} Do you want to enable SSL?")"; then
         ssl_enabled=":ssl"
-        if ! confirm_action "s" "$(format_prompt "${EMOJIS[CERT]} Usar certificado interno?")"; then
-            ssl_cert_path=$(read_input "Caminho do certificado SSL")
+        if ! confirm_action "y" "$(format_prompt "${EMOJIS[CERT]} Use internal certificate?")"; then
+            ssl_cert_path=$(read_input "SSL certificate path")
             [[ -n "$ssl_cert_path" ]] && ssl_cert_path="--cert=$ssl_cert_path"
         fi
     fi
 
-    http_response=$(read_input "Resposta HTTP padrão" "$DEFAULT_HTTP_RESPONSE")
+    http_response=$(read_input "Default HTTP response" "$DEFAULT_HTTP_RESPONSE")
 
-    if confirm_action "n" "$(format_prompt "${EMOJIS[SSH]} Habilitar modo somente SSH?")"; then
+    if confirm_action "n" "$(format_prompt "${EMOJIS[SSH]} Enable SSH-only mode?")"; then
         ssh_only_flag="--ssh-only"
     fi
 
@@ -211,7 +211,7 @@ start_proxy_service() {
     systemctl start "$(get_service_name "$port")"
     systemctl enable "$(get_service_name "$port")"
 
-    print_message "SUCCESS" "Proxy iniciado na porta $port."
+    print_message "SUCCESS" "Proxy started on port $port."
     wait_for_enter
 }
 
@@ -221,7 +221,7 @@ restart_proxy_service() {
     service_name=$(get_service_name "$port")
     systemctl restart "$service_name"
 
-    print_message "SUCCESS" "Proxy na porta $port reiniciado."
+    print_message "SUCCESS" "Proxy on port $port restarted."
     wait_for_enter
 }
 
@@ -236,7 +236,7 @@ stop_proxy_service() {
     rm -f "$service_file_path"
     systemctl daemon-reload
 
-    print_message "SUCCESS" "Proxy na porta $port foi encerrado."
+    print_message "SUCCESS" "Proxy on port $port has been stopped."
     wait_for_enter
 }
 
@@ -246,7 +246,7 @@ show_proxy_logs() {
     proxy_log_file=$(get_log_file_path "$port")
 
     if [[ ! -f "$proxy_log_file" ]]; then
-        print_message "ERROR" "Arquivo de log não encontrado."
+        print_message "ERROR" "Log file not found."
         wait_for_enter
         return
     fi
@@ -255,7 +255,7 @@ show_proxy_logs() {
     while :; do
         clear
         cat "$proxy_log_file"
-        echo -e "\nPressione ${COLORS[WARN]}Ctrl+C${COLORS[RESET]} para retornar ao menu."
+        echo -e "\nPress ${COLORS[WARN]}Ctrl+C${COLORS[RESET]} to return to the menu."
         sleep 1
     done
     trap - INT
@@ -273,15 +273,15 @@ display_menu() {
 
     active_ports=$(list_active_proxies)
     if [[ -n "$active_ports" ]]; then
-        echo -e "${COLORS[TITLE]}║${COLORS[SUCCESS]}Em uso:${COLORS[WARN]} $(printf "%-20s ${COLORS[TITLE]}║" "$active_ports")${COLORS[RESET]}"
+        echo -e "${COLORS[TITLE]}║${COLORS[SUCCESS]}Active:${COLORS[WARN]} $(printf "%-20s ${COLORS[TITLE]}║" "$active_ports")${COLORS[RESET]}"
         echo -e "${COLORS[TITLE]}║═════════════════════════════║${COLORS[RESET]}"
     fi
 
-    echo -e "${COLORS[TITLE]}║${COLORS[INFO]}[${COLORS[SUCCESS]}01${COLORS[INFO]}] ${COLORS[SUCCESS]}• ${COLORS[ERROR]}ABRIR PORTA           ${COLORS[TITLE]}║${COLORS[RESET]}"
-    echo -e "${COLORS[TITLE]}║${COLORS[INFO]}[${COLORS[SUCCESS]}02${COLORS[INFO]}] ${COLORS[SUCCESS]}• ${COLORS[ERROR]}FECHAR PORTA          ${COLORS[TITLE]}║${COLORS[RESET]}"
-    echo -e "${COLORS[TITLE]}║${COLORS[INFO]}[${COLORS[SUCCESS]}03${COLORS[INFO]}] ${COLORS[SUCCESS]}• ${COLORS[ERROR]}REINICIAR PORTA       ${COLORS[TITLE]}║${COLORS[RESET]}"
-    echo -e "${COLORS[TITLE]}║${COLORS[INFO]}[${COLORS[SUCCESS]}04${COLORS[INFO]}] ${COLORS[SUCCESS]}• ${COLORS[ERROR]}VER LOG DA PORTA      ${COLORS[TITLE]}║${COLORS[RESET]}"
-    echo -e "${COLORS[TITLE]}║${COLORS[INFO]}[${COLORS[SUCCESS]}00${COLORS[INFO]}] ${COLORS[ERROR]}• ${COLORS[WARN]}SAIR                  ${COLORS[TITLE]}║${COLORS[RESET]}"
+    echo -e "${COLORS[TITLE]}║${COLORS[INFO]}[${COLORS[SUCCESS]}01${COLORS[INFO]}] ${COLORS[SUCCESS]}• ${COLORS[ERROR]}OPEN PORT            ${COLORS[TITLE]}║${COLORS[RESET]}"
+    echo -e "${COLORS[TITLE]}║${COLORS[INFO]}[${COLORS[SUCCESS]}02${COLORS[INFO]}] ${COLORS[SUCCESS]}• ${COLORS[ERROR]}CLOSE PORT           ${COLORS[TITLE]}║${COLORS[RESET]}"
+    echo -e "${COLORS[TITLE]}║${COLORS[INFO]}[${COLORS[SUCCESS]}03${COLORS[INFO]}] ${COLORS[SUCCESS]}• ${COLORS[ERROR]}RESTART PORT         ${COLORS[TITLE]}║${COLORS[RESET]}"
+    echo -e "${COLORS[TITLE]}║${COLORS[INFO]}[${COLORS[SUCCESS]}04${COLORS[INFO]}] ${COLORS[SUCCESS]}• ${COLORS[ERROR]}VIEW PORT LOG        ${COLORS[TITLE]}║${COLORS[RESET]}"
+    echo -e "${COLORS[TITLE]}║${COLORS[INFO]}[${COLORS[SUCCESS]}00${COLORS[INFO]}] ${COLORS[ERROR]}• ${COLORS[WARN]}EXIT                 ${COLORS[TITLE]}║${COLORS[RESET]}"
     echo -e "${COLORS[TITLE]}╚═════════════════════════════╝${COLORS[RESET]}"
 }
 
@@ -292,7 +292,7 @@ main() {
         clear
         display_menu
         local choice
-        choice=$(read_input "Digite sua opção")
+        choice=$(read_input "Enter your option")
 
         case "$choice" in
         1 | 01) start_proxy_service ;;
@@ -300,11 +300,11 @@ main() {
         3 | 03) restart_proxy_service ;;
         4 | 04) show_proxy_logs ;;
         0 | 00)
-            print_message "EXIT" "Saindo. Até logo!"
+            print_message "EXIT" "Exiting. Goodbye!"
             exit 0
             ;;
         *)
-            print_message "ERROR" "Opção inválida."
+            print_message "ERROR" "Invalid option."
             wait_for_enter
             ;;
         esac
