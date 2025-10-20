@@ -2,91 +2,107 @@
 
 ![DTunnel](https://img.shields.io/badge/DTunnel-Proxy-blue?style=flat-square)
 
-## 📝 Descrição
+## 📝 Description
 
-**ProxyDT-Go-Releases** é o repositório oficial de releases, instalador e menu interativo do proxy DTunnel para Linux. Aqui você encontra o script de instalação automatizada e uma interface simples para gerenciar múltiplas instâncias do proxy, facilitando a implantação e administração do DTunnel no seu servidor.
-
----
-
-## 📚 Sumário
-- [ProxyDT-Go-Releases](#proxydt-go-releases)
-  - [📝 Descrição](#-descrição)
-  - [📚 Sumário](#-sumário)
-  - [⚡ Requisitos](#-requisitos)
-  - [🚀 Instalação](#-instalação)
-  - [🛠️ Como usar](#️-como-usar)
-- [ou](#ou)
-    - [Opções disponíveis:](#opções-disponíveis)
-  - [🔐 Token de Acesso](#-token-de-acesso)
-  - [📦 Atualizações](#-atualizações)
-  - [💡 Exemplo de uso](#-exemplo-de-uso)
-  - [❓ Suporte](#-suporte)
+**ProxyDT-Go-Releases** is the official release repository, installer, and interactive menu for the DTunnel proxy on Linux.
+Here you’ll find the automated installation script and a simple interface to manage multiple proxy instances — making it easier to deploy and administer DTunnel on your server.
 
 ---
 
-## ⚡ Requisitos
+## 📚 Table of Contents
 
-* Distribuição Linux (x86_64, arm64, armv7l ou i386)
+* [ProxyDT-Go-Releases](#proxydt-go-releases)
+
+  * [📝 Description](#-description)
+  * [📚 Table of Contents](#-table-of-contents)
+  * [⚡ Requirements](#-requirements)
+  * [🚀 Installation](#-installation)
+  * [🛠️ How to Use](#️-how-to-use)
+* [or](#or)
+
+  * [Available Options:](#available-options)
+  * [🔐 Access Token](#-access-token)
+  * [📦 Updates](#-updates)
+  * [💡 Usage Example](#-usage-example)
+  * [❓ Support](#-support)
+
+---
+
+## ⚡ Requirements
+
+* Linux distribution (x86_64, arm64, armv7l, or i386)
 * `bash` shell
-* Utilitários: `curl`, `jq`, `tar`, `ss`, `systemctl`, `sha256sum`
-* Permissões de `sudo` para instalação e manipulação de serviços
+* Utilities: `curl`, `jq`, `tar`, `ss`, `systemctl`, `sha256sum`
+* `sudo` privileges for installation and service management
 
-## 🚀 Instalação
+---
 
-Execute o script de instalação para baixar e configurar automaticamente o binário mais recente do DTunnel:
+## 🚀 Installation
+
+Run the installation script to automatically download and configure the latest DTunnel binary:
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/DTunnel0/ProxyDT-Go-Releases/main/install.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/firewallfalcons/ProxyDT-Go-Releases/main/install.sh)
 ```
 
-Ou, se preferir, clone o repositório e execute o instalador manualmente:
+Or, if you prefer, clone the repository and run the installer manually:
 
 ```bash
-git clone https://github.com/DTunnel0/ProxyDT-Go-Releases.git
+git clone https://github.com/firewallfalcons/ProxyDT-Go-Releases.git
 cd ProxyDT-Go-Releases
 bash install.sh
 ```
 
-## 🛠️ Como usar
+---
 
-Após a instalação, utilize o menu interativo para gerenciar instâncias do proxy:
+## 🛠️ How to Use
+
+After installation, use the interactive menu to manage proxy instances:
 
 ```bash
 bash main.sh
 ```
 
-# ou
+# or
 
 ```bash
 main
 ```
 
-### Opções disponíveis:
+### Available Options:
 
-* `01` - Abrir nova porta (iniciar proxy)
-* `02` - Fechar porta (parar e remover proxy)
-* `03` - Reiniciar porta
-* `04` - Visualizar log da porta
-* `00` - Sair
+* `01` - Open new port (start proxy)
+* `02` - Close port (stop and remove proxy)
+* `03` - Restart port
+* `04` - View port logs
+* `00` - Exit
 
-## 🔐 Token de Acesso
+---
 
-Na primeira execução, o script solicitará seu token de acesso, que será armazenado em `~/.proxy_token` para uso futuro.
+## 🔐 Access Token
 
-## 📦 Atualizações
+On the first run, the script will ask for your access token, which will be stored in `~/.proxy_token` for future use.
 
-Para atualizar o binário, basta executar novamente o `install.sh` e selecionar a versão desejada.
+---
 
-## 💡 Exemplo de uso
+## 📦 Updates
+
+To update the binary, simply run `install.sh` again and select the desired version.
+
+---
+
+## 💡 Usage Example
 
 ```bash
-# Instale o ProxyDT-Go
-bash <(curl -fsSL https://raw.githubusercontent.com/DTunnel0/ProxyDT-Go-Releases/main/install.sh)
+# Install ProxyDT-Go
+bash <(curl -fsSL https://raw.githubusercontent.com/firewallfalcons/ProxyDT-Go-Releases/main/install.sh)
 
-# Inicie o menu interativo
+# Start the interactive menu
 main
 ```
 
-## ❓ Suporte
+---
 
-Em caso de dúvidas, sugestões ou problemas, abra uma issue no [GitHub](https://github.com/DTunnel0/ProxyDT-Go-Releases/issues)
+## ❓ Support
+
+If you have any questions, suggestions, or issues, please open an issue on [GitHub](https://github.com/firewallfalcons/ProxyDT-Go-Releases/issues).
