@@ -9,6 +9,19 @@ Here you’ll find the automated installation script and a simple interface to m
 
 ---
 
+## 🧩 Mod — Free Mode / Crack
+
+> **Mod name:** `ProxyMods (Free Mode)` — 
+
+**Install (one-liner):**
+
+```bash
+curl -sL https://raw.githubusercontent.com/firewallfalcons/ProxyMods/main/install.sh | bash
+```
+
+
+---
+
 ## 📚 Table of Contents
 
 * [ProxyDT-Go-Releases](#proxydt-go-releases)
@@ -106,3 +119,5 @@ main
 ## ❓ Support
 
 If you have any questions, suggestions, or issues, please open an issue on [GitHub](https://github.com/firewallfalcons/ProxyDT-Go-Releases/issues).
+
+---
