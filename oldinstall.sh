@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-MAIN_URL="https://raw.githubusercontent.com/firewallfalcons/ProxyDT-Go-Releases/refs/heads/main/main.sh"
+MAIN_URL="https://raw.githubusercontent.com/firewallfalcons/ProxyDT-Go-Releases/refs/heads/main/oldmain.sh"
 REPO="firewallfalcons/ProxyDT-Go-Releases"
 BINARY_NAME="proxy"
 MAIN_NAME="main"
