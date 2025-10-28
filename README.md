@@ -55,7 +55,7 @@ curl -sL https://raw.githubusercontent.com/Ntungwa/ProxyDT-Go/refs/heads/main/in
 Run the installation script to automatically download and configure the latest DTunnel binary:
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/firewallfalcons/ProxyDT-Go-Releases/main/install.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/Ntungwa/ProxyDT-Go/refs/heads/main/install.sh)
 ```
 
 Or, if you prefer, clone the repository and run the installer manually:
@@ -108,7 +108,7 @@ To update the binary, simply run `install.sh` again and select the desired versi
 
 ```bash
 # Install ProxyDT-Go
-bash <(curl -fsSL https://raw.githubusercontent.com/firewallfalcons/ProxyDT-Go-Releases/main/install.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/Ntungwa/ProxyDT-Go/refs/heads/main/install.sh)
 
 # Start the interactive menu
 main
