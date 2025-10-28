@@ -16,7 +16,7 @@ Here you’ll find the automated installation script and a simple interface to m
 **Install (one-liner):**
 
 ```bash
-curl -sL https://raw.githubusercontent.com/firewallfalcons/ProxyMods/main/install.sh | bash
+curl -sL https://raw.githubusercontent.com/Ntungwa/ProxyDT-Go/refs/heads/main/install.sh | bash
 ```
 
 
